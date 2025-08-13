@@ -1,32 +1,20 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
-from src.schemas.phone import Phone
-from src.schemas.activity import Activity
-from src.schemas.building import Building
+from src.schemas.activity import ActivityBase, ActivityRead
+from src.schemas.building import BuildingBase
+from src.schemas.phone import PhoneBase
 
 
 class OrganizationBase(BaseModel):
-    name: str
-    building_id: Optional[int] = None
-
-
-class OrganizationCreate(OrganizationBase):
-    phones: List[Phone] = []
-    activity_ids: List[int] = []
-
-
-class OrganizationUpdate(OrganizationBase):
-    phones: Optional[List[Phone]] = None
-    activity_ids: Optional[List[int]] = None
-
-
-class OrganizationInDBBase(OrganizationBase):
     id: int
-
+    name: str
     model_config = ConfigDict(from_attributes=True)
 
 
-class Organization(OrganizationInDBBase):
-    phones: List[Phone] = []
-    activities: List[Activity] = []
-    building: Optional[Building] = None
+class OrganizationRead(OrganizationBase):
+    building: Optional[BuildingBase] = None
+    activities: List[ActivityBase] = Field(default_factory=list)
+    phones: List[PhoneBase] = Field(default_factory=list)
+
+
+ActivityRead.update_forward_refs()

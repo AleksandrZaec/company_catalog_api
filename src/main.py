@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from src.api import organization
 from src.config.logger import setup_logging, logger
 import time
 
@@ -15,3 +16,7 @@ async def log_requests(request, call_next):
     duration = (time.time() - start_time) * 1000
     logger.info(f"Completed {request.method} {request.url} with status {response.status_code} in {duration:.2f}ms")
     return response
+
+
+app.include_router(organization.router, prefix="/organizations", tags=["Organizations"])
+
