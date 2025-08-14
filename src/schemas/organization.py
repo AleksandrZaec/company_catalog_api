@@ -17,4 +17,4 @@ class OrganizationRead(OrganizationBase):
     phones: List[PhoneBase] = Field(default_factory=list)
 
 
-ActivityRead.update_forward_refs()
+ActivityRead.model_rebuild()

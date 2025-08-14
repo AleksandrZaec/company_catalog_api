@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16.2
+    container_name: postgres_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    restart: on-failure
+
+  app:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: always
+    entrypoint: ["/bin/sh", "-c", "./entrypoint.sh"]
+
+  tests:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .test.env
+    command: [ "sh", "-c", "./test_runner.sh" ]
+    restart: "no"
+
+volumes:
+  pg_data:

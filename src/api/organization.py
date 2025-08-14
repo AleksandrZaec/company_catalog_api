@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/organizations/by_building/{building_id}",
+    "/by_building/{building_id}",
     response_model=List[OrganizationRead],
     summary="Get organizations by building ID",
     description="Returns all organizations located in the specified building",
@@ -36,7 +36,7 @@ async def organizations_by_building(
 
 
 @router.get(
-    "/organizations/by_activity/{activity_id}",
+    "/by_activity/{activity_id}",
     response_model=List[OrganizationRead],
     summary="Get organizations by activity ID",
     description=f"Returns all organizations related to the specified activity and its children (up to {settings.MAX_ACTIVITY_DEPTH} levels deep)",
@@ -57,7 +57,7 @@ async def organizations_by_activity(
 
 
 @router.get(
-    "/organizations/by_activity_name/",
+    "/by_activity_name/",
     response_model=List[OrganizationRead],
     summary="Search organizations by activity name",
     description=f"Returns all organizations related to activities with matching name and their children (up to {settings.MAX_ACTIVITY_DEPTH} levels deep)",
@@ -78,7 +78,7 @@ async def organizations_by_activity_name(
 
 
 @router.get(
-    "/organizations/{org_id}",
+    "/{org_id}",
     response_model=OrganizationRead,
     summary="Get organization by ID",
     description="Returns detailed information about a specific organization",
@@ -99,7 +99,7 @@ async def organization_detail(
 
 
 @router.get(
-    "/organizations/search/by_name/",
+    "/search/by_name/",
     response_model=List[OrganizationRead],
     summary="Search organizations by name",
     description="Returns organizations with names containing the search string",
@@ -120,16 +120,16 @@ async def organization_search(
 
 
 @router.get(
-    "/organizations/in_radius/",
+    "/in_radius/",
     response_model=List[OrganizationRead],
     summary="Get organizations in geographic radius",
     description="Returns organizations located within specified radius (in km) from given coordinates",
     dependencies=[Depends(verify_api_key)]
 )
 async def organizations_in_radius(
-        lat: float = Query(..., example=55.751244, description="Latitude of center point"),
-        lng: float = Query(..., example=37.618423, description="Longitude of center point"),
-        radius: float = Query(..., example=5.0, description="Search radius in kilometers"),
+        lat: float = Query(..., examples=[55.751244], description="Latitude of center point"),
+        lng: float = Query(..., examples=[37.618423], description="Longitude of center point"),
+        radius: float = Query(..., examples=[5.0], description="Search radius in kilometers"),
         db: AsyncSession = Depends(get_db)
 ) -> List[OrganizationRead]:
     if radius <= 0:

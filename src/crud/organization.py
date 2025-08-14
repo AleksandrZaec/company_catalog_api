@@ -181,6 +181,8 @@ class OrganizationCRUD:
             radius_km: float,
             limit: Optional[int] = None
     ) -> Sequence[Organization]:
+        if radius_km <= 0:
+            return []
         """Searches for organizations within the specified coordinates"""
         try:
             result = await db.execute(
